@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankPlayerController.h"
+#include "Engine/World.h"
 
 ATank* ATankPlayerController::GetControlledTank() const {
 	return Cast<ATank>(GetPawn());
@@ -19,10 +20,7 @@ void ATankPlayerController::BeginPlay(){
 
 void ATankPlayerController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-	FVector OutHitLocation; //would be modified by GetSightRayHitLocation
-	if (GetSightRayHitLocation(OutHitLocation)) {
-
-	}
+	AimTowardTheCrosshair();
 }
 
 void ATankPlayerController::AimTowardTheCrosshair(){
@@ -30,7 +28,7 @@ void ATankPlayerController::AimTowardTheCrosshair(){
 
 	FVector OutHitLocation; //ini out parameter
 	if (GetSightRayHitLocation(OutHitLocation)) {
-
+		UE_LOG(LogTemp, Warning, TEXT("Hit Location: %s"), *OutHitLocation.ToString());
 	}
 }
 
@@ -41,14 +39,29 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector & OutHitLocation) con
 	auto ScreenLocation = FVector2D(ViewportSizeX*CrosshairXPosition, ViewportSizeY*CrosshairYPosition);
 	FVector LookDirection;
 	if (GetLookDirection(ScreenLocation, LookDirection)) {
-		UE_LOG(LogTemp, Warning, TEXT("Screen Location: %s"), *LookDirection.ToString());
+		GetLookVectorHitLocation(LookDirection, OutHitLocation);
 	}
 	return true;
 }
 
-
+bool ATankPlayerController::GetLookVectorHitLocation(FVector LookDirection, FVector& OutHitLocation) const {
+	FHitResult HitResult;
+	auto StartLocation = PlayerCameraManager->GetCameraLocation();
+	auto EndLocation = StartLocation + (LookDirection * LineTraceRange);
+	if (GetWorld()->LineTraceSingleByChannel(
+				HitResult,
+				StartLocation,
+				EndLocation,
+				ECollisionChannel::ECC_Visibility)
+		) {
+		OutHitLocation = HitResult.Location;
+		return true;
+	}
+	OutHitLocation = FVector(0);
+	return false;
+}
 
 bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const {
-	FVector WorldDirection;//ora butuh var iki, cuma butuh ngerti LookDirection
-	return DeprojectScreenPositionToWorld(ScreenLocation.X, ScreenLocation.Y, LookDirection, WorldDirection);
+	FVector CameraWorldLocation;//ora butuh var iki, cuma butuh ngerti LookDirection
+	return DeprojectScreenPositionToWorld(ScreenLocation.X, ScreenLocation.Y, CameraWorldLocation, LookDirection);
 }
