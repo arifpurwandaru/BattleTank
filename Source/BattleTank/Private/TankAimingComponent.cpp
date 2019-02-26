@@ -33,12 +33,17 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float KecepatanPelor) {
 		StartLocation,
 		HitLocation,
 		KecepatanPelor,
+		false,
+		0,
+		0,
 		ESuggestProjVelocityTraceOption::DoNotTrace
 	);
 	if (bHaveAimSolution) {
 			auto AimDirection = OutLaunchVelocity.GetSafeNormal();
 			GerakakenPistule(AimDirection);
 	}
+	
+	
 		
 }
 
@@ -47,6 +52,5 @@ void UTankAimingComponent::GerakakenPistule(FVector AimDirection) {
 	auto PistulRotator = Pistul->GetForwardVector().Rotation();
 	auto AimAsRotator = AimDirection.Rotation();
 	auto DeltaRotator = AimAsRotator - PistulRotator;
-
-	Pistul->Elevate(123);
+	Pistul->Elevate(DeltaRotator.Pitch);
 }
