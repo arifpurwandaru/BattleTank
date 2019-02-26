@@ -2,6 +2,8 @@
 
 #include "TankAimingComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "PistulBarel.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
@@ -14,30 +16,37 @@ UTankAimingComponent::UTankAimingComponent()
 }
 
 
-void UTankAimingComponent::SetKomponenPistul(UStaticMeshComponent * PistulToSet){
+void UTankAimingComponent::SetKomponenPistul(UPistulBarel * PistulToSet){
 	Pistul = PistulToSet;
 }
 
-// Called when the game starts
-void UTankAimingComponent::BeginPlay()
-{
-	Super::BeginPlay();
 
-	// ...
-	
+void UTankAimingComponent::AimAt(FVector HitLocation, float KecepatanPelor) {
+	if (!Pistul) { return; }
+	FVector OutLaunchVelocity;
+	FVector StartLocation = Pistul->GetSocketLocation(FName("Projectile"));
+
+	//Calculate the OutLaunchVelocity
+	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity(
+		this,
+		OutLaunchVelocity,
+		StartLocation,
+		HitLocation,
+		KecepatanPelor,
+		ESuggestProjVelocityTraceOption::DoNotTrace
+	);
+	if (bHaveAimSolution) {
+			auto AimDirection = OutLaunchVelocity.GetSafeNormal();
+			GerakakenPistule(AimDirection);
+	}
+		
 }
 
+void UTankAimingComponent::GerakakenPistule(FVector AimDirection) {
+	//Work-out difference between current barrel (pistul) rotation and AimDirection
+	auto PistulRotator = Pistul->GetForwardVector().Rotation();
+	auto AimAsRotator = AimDirection.Rotation();
+	auto DeltaRotator = AimAsRotator - PistulRotator;
 
-// Called every frame
-void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
-
-void UTankAimingComponent::AimAt(FVector WorldSpaceLocation) {
-	auto PistulLocation = Pistul->GetComponentLocation().ToString();
-	UE_LOG(LogTemp, Warning, TEXT("Tank %s Aiming at %s from pistul: %s"), *GetOwner()->GetName(), *WorldSpaceLocation.ToString(), *PistulLocation);
+	Pistul->Elevate(123);
 }

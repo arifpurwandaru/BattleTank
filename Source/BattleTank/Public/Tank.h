@@ -7,6 +7,8 @@
 #include "GameFramework/Pawn.h"
 #include "Tank.generated.h"
 
+class UPistulBarel;
+
 UCLASS()
 class BATTLETANK_API ATank : public APawn
 {
@@ -19,16 +21,16 @@ public:
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
 	UFUNCTION(BlueprintCallable, Category = Setup)
-	void SetPistulReference(UStaticMeshComponent* PistulToSet);
+	void SetPistulReference(UPistulBarel* PistulToSet);
+
+	UPROPERTY(EditAnywhere, Category = Firing)
+	float KecepatanPelor = 100000; //1000 m/s
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
