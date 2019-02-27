@@ -29,7 +29,7 @@ public:
 	void SetTankTurretReference(UTankTurret* TurretToSet);
 
 	UPROPERTY(EditAnywhere, Category = Firing)
-	float KecepatanPelor = 100000; //1000 m/s
+	float KecepatanPelor = 5000; //1000 m/s
 
 protected:
 	// Called when the game starts or when spawned
