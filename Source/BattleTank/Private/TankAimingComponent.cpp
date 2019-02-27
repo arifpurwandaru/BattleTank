@@ -3,6 +3,7 @@
 #include "TankAimingComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "PistulBarel.h"
+#include "TankTurret.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
@@ -18,6 +19,10 @@ UTankAimingComponent::UTankAimingComponent()
 
 void UTankAimingComponent::SetKomponenPistul(UPistulBarel * PistulToSet){
 	Pistul = PistulToSet;
+}
+
+void UTankAimingComponent::SetTankTurrent(UTankTurret * TurretToSet){
+	TankTurret = TurretToSet;
 }
 
 

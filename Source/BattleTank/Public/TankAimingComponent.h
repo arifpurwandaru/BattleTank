@@ -8,6 +8,7 @@
 
 //forward declaration
 class UPistulBarel; 
+class UTankTurret;
 
 //The Aiming Component
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -19,12 +20,14 @@ public:
 	// Sets default values for this component's properties
 	UTankAimingComponent();
 	void SetKomponenPistul(UPistulBarel* PistulToSet);
+	void SetTankTurrent(UTankTurret* TurretToSet);
 	void AimAt(FVector HitLocation, float KecepatanPelor);
 	 
 
 
 private:
 	UPistulBarel* Pistul = nullptr;
+	UTankTurret* TankTurret = nullptr;
 	void GerakakenPistule(FVector AimDirection);
 		
 };

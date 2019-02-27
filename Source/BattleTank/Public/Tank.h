@@ -8,6 +8,7 @@
 
 //forward Declaration
 class UPistulBarel;
+class UTankTurret;
 class UTankAimingComponent;
 
 UCLASS()
@@ -23,6 +24,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Setup)
 	void SetPistulReference(UPistulBarel* PistulToSet);
+
+	UFUNCTION(BlueprintCallable, Category = Setup)
+	void SetTankTurretReference(UTankTurret* TurretToSet);
 
 	UPROPERTY(EditAnywhere, Category = Firing)
 	float KecepatanPelor = 100000; //1000 m/s
