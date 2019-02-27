@@ -58,4 +58,5 @@ void UTankAimingComponent::GerakakenPistule(FVector AimDirection) {
 	auto AimAsRotator = AimDirection.Rotation();
 	auto DeltaRotator = AimAsRotator - PistulRotator;
 	Pistul->Elevate(DeltaRotator.Pitch);
+	TankTurret->Mubeng(DeltaRotator.Yaw);
 }

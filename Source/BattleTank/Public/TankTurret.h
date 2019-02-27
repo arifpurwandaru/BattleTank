@@ -13,5 +13,13 @@ UCLASS(meta = (BlueprintSpawnableComponent))
 class BATTLETANK_API UTankTurret : public UStaticMeshComponent
 {
 	GENERATED_BODY()
+
+public:
+	void Mubeng(float RelativeSpeed);
+
+
+private:
+	UPROPERTY(EditAnywhere)
+	float MaxDegreesPerSecond = 5;
 	
 };

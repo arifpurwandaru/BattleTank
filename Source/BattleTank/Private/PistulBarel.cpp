@@ -8,4 +8,5 @@ void UPistulBarel::Elevate(float RelativeSpeed) {
 	auto RawNewElevation = RelativeRotation.Pitch + ElevationChange;
 	auto Elevation = FMath::Clamp(RawNewElevation, MinElevation, MaxElevation);
 	SetRelativeRotation(FRotator(Elevation, 0, 0));
+	
 }
