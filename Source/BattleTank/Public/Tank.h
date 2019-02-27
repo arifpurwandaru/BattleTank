@@ -10,6 +10,7 @@
 class UPistulBarel;
 class UTankTurret;
 class UTankAimingComponent;
+class AProjectile;
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -28,8 +29,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Setup)
 	void SetTankTurretReference(UTankTurret* TurretToSet);
 
+	UFUNCTION(BlueprintCallable)
+	void FunctionTembakDariCPP();
+
+private:
 	UPROPERTY(EditAnywhere, Category = Firing)
-	float KecepatanPelor = 5000; //1000 m/s
+	float KecepatanPelor = 5000; //50 m/s
+
+	UPROPERTY(EditAnywhere, Category = Setup)
+	TSubclassOf<AProjectile> ProjectileBlueprint;
+
+	UPistulBarel* LocalBarelToShoot = nullptr;
 
 protected:
 	// Called when the game starts or when spawned

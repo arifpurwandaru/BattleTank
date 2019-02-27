@@ -3,6 +3,7 @@
 #include "Tank.h"
 #include "PistulBarel.h"
 #include "TankTurret.h"
+#include "Projectile.h"
 #include "TankAimingComponent.h"
 
 // Sets default values
@@ -37,8 +38,22 @@ void ATank::AimAt(FVector vector){
 
 void ATank::SetPistulReference(UPistulBarel * PistulToSet){
 	TankAimingComponent->SetKomponenPistul(PistulToSet);
+	LocalBarelToShoot = PistulToSet;
 }
 
 void ATank::SetTankTurretReference(UTankTurret* TurretToSet) {
 	TankAimingComponent->SetTankTurrent(TurretToSet);
+}
+
+
+void ATank::FunctionTembakDariCPP(){
+	if (!LocalBarelToShoot) { return; }
+
+	auto Peluru = GetWorld()->SpawnActor<AProjectile>(
+		ProjectileBlueprint,
+		LocalBarelToShoot->GetSocketLocation(FName("Projectile")),
+		LocalBarelToShoot->GetSocketRotation(FName("Projectile"))
+		);
+
+	Peluru->LuncurkanPeluru(KecepatanPelor);
 }
