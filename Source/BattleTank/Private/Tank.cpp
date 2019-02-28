@@ -46,14 +46,22 @@ void ATank::SetTankTurretReference(UTankTurret* TurretToSet) {
 }
 
 
-void ATank::FunctionTembakDariCPP(){
-	if (!LocalBarelToShoot) { return; }
+bool ATank::FunctionTembakDariCPP(){
+	bool isReloaded = (FPlatformTime::Seconds() - LastReloaded) > ReloadTimeInSeconds;
 
-	auto Peluru = GetWorld()->SpawnActor<AProjectile>(
-		ProjectileBlueprint,
-		LocalBarelToShoot->GetSocketLocation(FName("Projectile")),
-		LocalBarelToShoot->GetSocketRotation(FName("Projectile"))
-		);
+	if (isReloaded) {
 
-	Peluru->LuncurkanPeluru(KecepatanPelor);
+		//Nyepawn peluru dari socketnya barrel yg bernama "Projectile" => liat socket di static mesh barrel
+		auto Peluru = GetWorld()->SpawnActor<AProjectile>(
+			ProjectileBlueprint,
+			LocalBarelToShoot->GetSocketLocation(FName("Projectile")),
+			LocalBarelToShoot->GetSocketRotation(FName("Projectile"))
+			);
+
+		Peluru->LuncurkanPeluru(KecepatanPelor);
+
+		LastReloaded = FPlatformTime::Seconds();
+		return true;
+	}
+	return false;
 }

@@ -30,7 +30,7 @@ public:
 	void SetTankTurretReference(UTankTurret* TurretToSet);
 
 	UFUNCTION(BlueprintCallable)
-	void FunctionTembakDariCPP();
+	bool FunctionTembakDariCPP();
 
 private:
 	UPROPERTY(EditAnywhere, Category = Firing)
@@ -39,7 +39,12 @@ private:
 	UPROPERTY(EditAnywhere, Category = Setup)
 	TSubclassOf<AProjectile> ProjectileBlueprint;
 
+	UPROPERTY(EditAnywhere, Category = Setup)
+		float ReloadTimeInSeconds = 3;
+
 	UPistulBarel* LocalBarelToShoot = nullptr;
+
+	double LastReloaded = 0;
 
 protected:
 	// Called when the game starts or when spawned
