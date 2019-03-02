@@ -13,5 +13,13 @@ UCLASS(meta = (BlueprintSpawnableComponent))
 class BATTLETANK_API UTankTrack : public UStaticMeshComponent
 {
 	GENERATED_BODY()
-	
+
+public:
+	UFUNCTION(BlueprintCallable, Category=Input)
+	void SetThrottle(float Throttle);
+
+
+	//Force atau daya dalam newtons, F=m*a
+	UPROPERTY(EditDefaultsOnly)
+	float TrackMaxDrivingForce = 27007000; //karena tank massa nya 40kg
 };
