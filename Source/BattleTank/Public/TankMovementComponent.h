@@ -22,6 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable, category = Input)
 	void IntendMoveForward(float Throw);
 
+	UFUNCTION(BlueprintCallable, category = Input)
+	void IntendMoveKananKirik(float Throw);
+
 private:
 	UTankTrack* RightTrack = nullptr;
 	UTankTrack* LeftTrack = nullptr;
