@@ -25,6 +25,8 @@ public:
 	UFUNCTION(BlueprintCallable, category = Input)
 	void IntendMoveKananKirik(float Throw);
 
+	virtual void RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed) override;
+
 private:
 	UTankTrack* RightTrack = nullptr;
 	UTankTrack* LeftTrack = nullptr;
