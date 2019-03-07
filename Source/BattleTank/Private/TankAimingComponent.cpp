@@ -62,10 +62,10 @@ void UTankAimingComponent::GerakakenPistule(FVector AimDirection) {
 
 
 bool UTankAimingComponent::FunctionTembakDariCPP() {
+	if (!ensure(ProjectileBlueprint)) { return false; }
 	bool isReloaded = (FPlatformTime::Seconds() - LastReloaded) > ReloadTimeInSeconds;
 
 	if (isReloaded) {
-
 		//Nyepawn peluru dari socketnya barrel yg bernama "Projectile" => liat socket di static mesh barrel
 		auto Peluru = GetWorld()->SpawnActor<AProjectile>(
 			ProjectileBlueprint,
