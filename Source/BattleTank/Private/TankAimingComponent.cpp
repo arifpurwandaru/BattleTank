@@ -4,6 +4,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "PistulBarel.h"
 #include "TankTurret.h"
+#include "Projectile.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
@@ -17,17 +18,14 @@ UTankAimingComponent::UTankAimingComponent()
 }
 
 
-void UTankAimingComponent::SetKomponenPistul(UPistulBarel * PistulToSet){
+void UTankAimingComponent::Initialize(UPistulBarel * PistulToSet, UTankTurret * TurretToSet) {
 	Pistul = PistulToSet;
-}
-
-void UTankAimingComponent::SetTankTurrent(UTankTurret * TurretToSet){
 	TankTurret = TurretToSet;
 }
 
 
-void UTankAimingComponent::AimAt(FVector HitLocation, float KecepatanPelor) {
-	if (!Pistul) { return; }
+void UTankAimingComponent::AimAt(FVector HitLocation) {
+	if (!ensure(Pistul)) { return; }
 	FVector OutLaunchVelocity;
 	FVector StartLocation = Pistul->GetSocketLocation(FName("Projectile"));
 
@@ -52,6 +50,7 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float KecepatanPelor) {
 		
 }
 
+
 void UTankAimingComponent::GerakakenPistule(FVector AimDirection) {
 	//Work-out difference between current barrel (pistul) rotation and AimDirection
 	auto PistulRotator = Pistul->GetForwardVector().Rotation();
@@ -59,4 +58,25 @@ void UTankAimingComponent::GerakakenPistule(FVector AimDirection) {
 	auto DeltaRotator = AimAsRotator - PistulRotator;
 	Pistul->Elevate(DeltaRotator.Pitch);
 	TankTurret->Mubeng(DeltaRotator.Yaw);
+}
+
+
+bool UTankAimingComponent::FunctionTembakDariCPP() {
+	bool isReloaded = (FPlatformTime::Seconds() - LastReloaded) > ReloadTimeInSeconds;
+
+	if (isReloaded) {
+
+		//Nyepawn peluru dari socketnya barrel yg bernama "Projectile" => liat socket di static mesh barrel
+		auto Peluru = GetWorld()->SpawnActor<AProjectile>(
+			ProjectileBlueprint,
+			Pistul->GetSocketLocation(FName("Projectile")),
+			Pistul->GetSocketRotation(FName("Projectile"))
+			);
+
+		Peluru->LuncurkanPeluru(KecepatanPelor);
+
+		LastReloaded = FPlatformTime::Seconds();
+		return true;
+	}
+	return false;
 }

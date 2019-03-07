@@ -4,6 +4,7 @@
 #include "TankPlayerController.h"
 #include "Engine/World.h"
 #include "Tank.h"
+#include "TankAimingComponent.h"
 
 ATank* ATankPlayerController::GetControlledTank() const {
 	return Cast<ATank>(GetPawn());
@@ -11,6 +12,10 @@ ATank* ATankPlayerController::GetControlledTank() const {
 
 void ATankPlayerController::BeginPlay(){
 	Super::BeginPlay();
+
+	auto AimingComponent = GetControlledTank()->FindComponentByClass<UTankAimingComponent>();
+	if (!ensure(AimingComponent)) { return; }
+		FoundAimingComponent(AimingComponent);
 }
 
 void ATankPlayerController::Tick(float DeltaTime) {
@@ -19,11 +24,17 @@ void ATankPlayerController::Tick(float DeltaTime) {
 }
 
 void ATankPlayerController::AimTowardTheCrosshair(){
-	if (!GetControlledTank()) { return; }
+	if (!ensure(GetControlledTank())) { return; }
 
 	FVector OutHitLocation; //ini out parameter
 	if (GetSightRayHitLocation(OutHitLocation)) {
-		GetControlledTank()->AimAt(OutHitLocation);
+		UTankAimingComponent* TankAimingComponent = nullptr;
+		TankAimingComponent = GetControlledTank()->GetTankAimingComponent();
+		if (!ensure(TankAimingComponent)) { return; }
+
+
+		TankAimingComponent->AimAt(OutHitLocation);
+	
 	}
 }
 
@@ -37,6 +48,11 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector & OutHitLocation) con
 		GetLookVectorHitLocation(LookDirection, OutHitLocation);
 	}
 	return true;
+}
+
+bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const {
+	FVector CameraWorldLocation;//ora butuh var iki, cuma butuh ngerti LookDirection
+	return DeprojectScreenPositionToWorld(ScreenLocation.X, ScreenLocation.Y, CameraWorldLocation, LookDirection);
 }
 
 bool ATankPlayerController::GetLookVectorHitLocation(FVector LookDirection, FVector& OutHitLocation) const {
@@ -56,7 +72,3 @@ bool ATankPlayerController::GetLookVectorHitLocation(FVector LookDirection, FVec
 	return false;
 }
 
-bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const {
-	FVector CameraWorldLocation;//ora butuh var iki, cuma butuh ngerti LookDirection
-	return DeprojectScreenPositionToWorld(ScreenLocation.X, ScreenLocation.Y, CameraWorldLocation, LookDirection);
-}
