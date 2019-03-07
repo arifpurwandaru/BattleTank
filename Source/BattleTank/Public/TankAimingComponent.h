@@ -28,10 +28,9 @@ class BATTLETANK_API UTankAimingComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UTankAimingComponent();
-
+	
 	void AimAt(FVector HitLocation);
 	
-
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void Initialize(UPistulBarel* PistulToSet, UTankTurret* TurretToSet);
 
@@ -44,6 +43,13 @@ protected:
 	EFiringState FiringState = EFiringState::Reloading;
 
 private:
+	virtual void BeginPlay() override;
+
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+
+	bool IsBarrelMoving();
+
+
 	UPistulBarel* Pistul = nullptr;
 	UTankTurret* TankTurret = nullptr;
 
@@ -59,6 +65,8 @@ private:
 	float ReloadTimeInSeconds = 3;
 
 	void GerakakenPistule(FVector AimDirection);
+
+	FVector AimDirection;
 
 		
 };

@@ -12,9 +12,35 @@ UTankAimingComponent::UTankAimingComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+}
+
+void UTankAimingComponent::BeginPlay() {
+	LastReloaded = FPlatformTime::Seconds();
+}
+
+void UTankAimingComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+{
+	if ((FPlatformTime::Seconds() - LastReloaded) < ReloadTimeInSeconds)
+	{
+		FiringState = EFiringState::Reloading;
+	}
+	else if (IsBarrelMoving()) {
+		FiringState = EFiringState::Aiming;
+	}
+	else {
+		FiringState = EFiringState::Locked;
+	}
+}
+
+bool UTankAimingComponent::IsBarrelMoving()
+{
+	if (!ensure(Pistul)) { return false; }
+	auto BarrelForward = Pistul->GetForwardVector();
+
+	return !BarrelForward.Equals(AimDirection,0.01);
 }
 
 
@@ -42,13 +68,15 @@ void UTankAimingComponent::AimAt(FVector HitLocation) {
 		ESuggestProjVelocityTraceOption::DoNotTrace
 	);
 	if (bHaveAimSolution) {
-			auto AimDirection = OutLaunchVelocity.GetSafeNormal();
+			AimDirection = OutLaunchVelocity.GetSafeNormal();
 			GerakakenPistule(AimDirection);
 	}
 	
 	
 		
 }
+
+
 
 
 void UTankAimingComponent::GerakakenPistule(FVector AimDirection) {
@@ -63,9 +91,10 @@ void UTankAimingComponent::GerakakenPistule(FVector AimDirection) {
 
 bool UTankAimingComponent::FunctionTembakDariCPP() {
 	if (!ensure(ProjectileBlueprint)) { return false; }
-	bool isReloaded = (FPlatformTime::Seconds() - LastReloaded) > ReloadTimeInSeconds;
+	
+	//bool isReloaded = (FPlatformTime::Seconds() - LastReloaded) > ReloadTimeInSeconds;
 
-	if (isReloaded) {
+	if (FiringState != EFiringState::Reloading){
 		//Nyepawn peluru dari socketnya barrel yg bernama "Projectile" => liat socket di static mesh barrel
 		auto Peluru = GetWorld()->SpawnActor<AProjectile>(
 			ProjectileBlueprint,
