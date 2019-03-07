@@ -25,9 +25,9 @@ public:
 	UFUNCTION(BlueprintCallable, category = Input)
 	void IntendMoveKananKirik(float Throw);
 
-	virtual void RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed) override;
-
 private:
+	//Called from pathfinding logic from the AI Controller
+	virtual void RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed) override;
 	UTankTrack* RightTrack = nullptr;
 	UTankTrack* LeftTrack = nullptr;
 	
