@@ -21,10 +21,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	ATank* GetControlledTank() const;
 
 	virtual void BeginPlay() override;
 
+protected:
+	UFUNCTION(BlueprintCallable, Category="Setup")
+	ATank* GetControlledTank() const;
 private:
 	void AimTowardTheCrosshair();
 	bool GetSightRayHitLocation(FVector& OutHitLocation) const;
