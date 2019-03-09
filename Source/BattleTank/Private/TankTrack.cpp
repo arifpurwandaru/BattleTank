@@ -3,31 +3,40 @@
 #include "TankTrack.h"
 
 UTankTrack::UTankTrack() {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
+}
+
+void UTankTrack::BeginPlay(){
+	Super::BeginPlay();
+	OnComponentHit.AddDynamic(this, &UTankTrack::OnHit);
 }
 
 
-void UTankTrack::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+//Function ini supaya tank tidak ngedrift2 gajelas
+void UTankTrack::ApplySidewayForce()
 {
-	Super::TickComponent(DeltaTime,TickType, ThisTickFunction);
-	
-	//begin: beberapa code dibawah ini supaya gak ngedrift
-	
 	auto SlippageSpeed = FVector::DotProduct(GetRightVector(), GetComponentVelocity());
 	//work-out the required acceleration this frame to correct
+	auto DeltaTime = GetWorld()->GetDeltaSeconds();
 	auto CorrectionAcceleration = -SlippageSpeed / DeltaTime * GetRightVector();
 	//calculate and apply sideways (F=m.a)
 	auto TankRoot = Cast<UStaticMeshComponent>(GetOwner()->GetRootComponent());
-	auto CorrectionForce = (TankRoot->GetMass()* CorrectionAcceleration) /2; //2 tracks
+	auto CorrectionForce = (TankRoot->GetMass()* CorrectionAcceleration) / 2; //2 tracks
 	TankRoot->AddForce(CorrectionForce);
-
-
+}
+void UTankTrack::OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit)
+{
+	DriveTrack();
+	ApplySidewayForce();
+	CurrentThrottle = 0;
 }
 void UTankTrack::SetThrottle(float Throttle) {
-	
-	auto ForceApplied = GetForwardVector() * Throttle * TrackMaxDrivingForce;
+	CurrentThrottle = FMath::Clamp<float>(CurrentThrottle + Throttle, -1, 1);
+}
+
+void UTankTrack::DriveTrack() {
+	auto ForceApplied = GetForwardVector() * CurrentThrottle * TrackMaxDrivingForce;
 	auto ForceLocation = GetComponentLocation(); //lokasi rantai roda penggerak (tankTrack)
-	
 	//tank root adalah parentnya TankTrack which is instance tank itu sendiri
 	//dicast menjadi UPrimitiveComponents (mbahnya staticmeshcomponent) karena kalo ga dicast
 	//dia otomatis jadi SceneComponent (mbah buyute staticmeshcomponent) dan tidak bisa diapply force
