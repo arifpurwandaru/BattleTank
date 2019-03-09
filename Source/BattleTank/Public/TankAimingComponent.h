@@ -37,6 +37,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool FunctionTembakDariCPP();
 
+	EFiringState GetFiringState() const;
+
 	 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "State")

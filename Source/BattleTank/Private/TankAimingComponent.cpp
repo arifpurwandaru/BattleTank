@@ -109,3 +109,8 @@ bool UTankAimingComponent::FunctionTembakDariCPP() {
 	}
 	return false;
 }
+
+EFiringState UTankAimingComponent::GetFiringState() const
+{
+	return FiringState;
+}

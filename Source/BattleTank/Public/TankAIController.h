@@ -24,5 +24,6 @@ public:
 	
 private:
 	//How close can the AI tank get close to the tank player
+	UPROPERTY(EditAnywhere, Category="Jangkrik")
 	float AcceptanceRadius = 3000;
 };

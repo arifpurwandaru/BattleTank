@@ -21,7 +21,7 @@ public:
 
 	//Force atau daya dalam newtons, F=m*a
 	UPROPERTY(EditDefaultsOnly)
-	float TrackMaxDrivingForce = 21007000; //karena tank massa nya 40kg
+	float TrackMaxDrivingForce = 32707000; //karena tank massa nya 40kg
 
 private:
 	UTankTrack();
